@@ -1,0 +1,232 @@
+\documentclass{article}
+\usepackage{amsmath}
+
+\usepackage{graphicx} % Required for inserting images
+\usepackage{algpseudocodex}
+
+
+\begin{document}
+
+\title{machine learning notes}
+\author{guillem.tobias }
+\date{October 2024}
+
+
+\maketitle
+\section{TO DO LIST}
+\begin{itemize}
+    \item \textbf{I can start by reading the introduction to new chapter}
+    \item Chapter 10: Boosting. \textit{Some basis expansions may be required.}
+    \item $$\mathcal{D}$$ \textbf{to make fancy letters}
+
+    \item \textit{Optional}
+    \item  Expanding basis 
+    \item Kernel
+    \item Understanding machine learning book. Has chapter list of basics.
+\end{itemize}
+
+
+\section{Classifiers}
+
+\section{Logistic regression}
+Why do we sometimes define it with K-1 alternatives and sometimes we don't care.
+
+\section{Mathematical statistics: Brief on statistical decision making.}
+\textit{I need to write that couple pages here. Would need a bit more familiarity with the prob theory first.}
+
+\section{ESLII CHAP 5: Basis expansions}
+
+\subsection{Basics for understanding boosting.}
+The core idea in this chapter is to augment/replace the
+vector of inputs X with additional variables, which are transformations of
+X, and then use linear models in this new space of derived input features.
+
+Most basic splines are constants, follow the same reasoning as a tree 
+
+Knot/boundary location is \textit{uniform over the given $x_p$} at first, I am sure there are algorithms to improve location and whatnot.
+
+\textit{Traditional workflow:}
+Take each variable and make splines out of it, can be constant or linear or cubic, whatever. Constant is clearest example.
+Then these splines have parameters to be estimated, the grouped mean or whatever, if it's linear it's like a local ols.
+\textbf{We run the same linear algorithm in the end, that is nice part.}
+\section{AoF CHAP 12: Statistical decision theory.}
+
+
+
+
+\section{ESLII CHAP 7: Model assessment and validation}
+
+We choose a loss function, it will be mean squared loss 99 percent of the times. $$L(Y,f(X))=(Y-f(X))^2$$ 
+
+Risk is the expected loss function, expectation over what? Well, over the random stuff, so if Y is random it will be over $f(x,y)$ if Y is a fixed unkown quantity just over $f(x)$.
+
+Then we go to test error: $Err_t= E[L(Y,\hat{f}^{-X_t,-Y_t}(X))|test: X,Y]$
+This test error is random because it comes from a random sample, because the f function is generated with the training data no? ,but it can be easily computed via sample analog, for a given sample this is a known quantity. \textbf{A bit unsure.}
+
+By LIE we get back to original definition of risk as the expected. $E_t[Err_t]$, this definition is very useful as a more practical one because we can compute everything's sample analog with ease. Compute error over samples, inner error is known no? and then average, justifies cross validation. It is analogous.
+\textit{This reasoning is general, it follows for any loss function, including for classification.}
+
+The chapter has \textbf{2 aims}: \textbf{Model selection} and \textbf{Model evaluation}, from the previous results we know that it is very similar.
+
+In data rich scenarios, we divide into 3 parts, training, validation for the model selection, and evaluation for the test. Because model selection and evaluation are kind of similar, you don't want to tune your models hyperparameters on the test set.
+
+Then we get back to bias variance decomposition. 
+\textbf{This would be good practice to derive and to fully understand what they are doing, expectations over what blabla}
+
+\subsection{7.4 part of the chapter}
+
+I think that my reasoning above was wrong as now they define it more properly.
+Define the training set t.
+Then $$Err_{X_0,Y_0}= E_{X_0,Y_0}[L(Y^0,\hat{f}(X^0))|t]$$
+This expectation is over the distribution of the test sample. Now this is a random quantity because X0, y0 are new, this is very much CV analog.
+For the unconditional error we take LIE over the distribution of the training samples, we get expected error or risk. Then this can be done in sample version very easily.
+\subsection{7.7 INTERESTING BAYES AND BIC.}
+
+
+\subsection{7.10 Cross validation}
+Remember asymptotics of cross validation are tough due to correlation, read that paper and the executive summary.
+Cross validation estimator of pred error (I think they should say risk). $$CV(\hat{f})=\frac{1}{N}\sum_i=L(y_i,\hat{f}^{-k(i)}(X_i))$$
+
+They mention this is approximately unbiased estimator, but with high correlation in the sample which is what makes it complicated I am guessing.
+This can be used for hyperparameter tuning, everything the same with a given alpha. 
+For hyper parameter tuning we usually need to use brute force grid search.
+
+The right way to do CV, \textit{avoid data leakage}, start with CV split and then do variable selection. 
+If we have multistep modeling, like variable selection. \textbf{The CV is done in the first step and then all the rest follows as normal but applied to the K-1 folds, never the total sample.}
+
+\subsection{Bootstrap}
+\textbf{Z}=$(z_1,...,z_N)$ where $z_i = (x_i,y_i)$ tuple, so each tuple is an iid sample.
+$S(Z) $ is the statistic and we can compute the variance or confidence interval with ease.
+
+$\hat{Var}$ = $1/(B-1)\sum_{b=1}(S(Z^b)-av(S_b))^2$
+
+\textit{Beautiful equivalence: }Note that dVar[S(Z)] can be thought of as a
+Monte-Carlo estimate of the variance of S(Z) under sampling from the
+empirical distribution function  $\hat{F}$ for the data (z1, z2, . . . , zN). 
+
+Interesting thought, so the bootstrap will converge to the variance of the estimator in the sample? And we think that sample will be representative.
+
+Not a good estimator for expected error/risk. Can be more or less fixed.
+
+\subsection{Expected error or conditional error}
+
+Review the simulation they do because it is confusing. 
+\textbf{Main takeaway:} Estimating conditional is more difficult. CV /boot give unbiased estimates of the error rate.
+
+
+
+\section{Highly imbalanced classes}
+https://stats.stackexchange.com/questions/235808/binary-classification-with-strongly-unbalanced-classes
+
+https://stackoverflow.com/questions/59409967/proper-way-to-handle-highly-imbalanced-data-binary-classification
+
+\section{ESLII CHAP 9.2: Tree based methods.}
+Trees are usually done with this recursive binary splitting, so we split the whole regressor space into 2, then we split the subsequent regions and so on and so on. If you don't stop the tree will be overfitting a lot.
+
+Key equation that describes a tree: 
+$$\hat{f}(X) = \sum_{m=1}^{N_r} c_m \textrm{\textbf{I}}(X \in R_m)$$
+This seems complicated but it just means that for all observations in a given region we will predict with a constant number.
+
+If we then use a squared loss criterion the $c_m$ tha minimizes the loss will be the conditional mean for that given subset.
+
+It is easy start from $\sum_i^n(y_i -f(x))^2$ then plug in our f(x) and just decompose this using the indicator, so partition the n sum into different smaller sums for each subgroup.
+\textit{Do the derivation as an exercise.}
+
+Then for any general split:
+We consider the following regions: $R_1(j,s) = \{ X| X_j \leq s \}$ and $R_2(j,s) = \{ X| X_j > s \}$
+
+Our optimization problem is then to minimize the squared loss in both regions : 
+$$ \textrm{min}_{j,s}[\textrm{min}_{c_1} \sum_{x_i \in R_1(j,s)}(y_i-c_1)^2 + \textrm{min}_{c_2} \sum_{x_i \in R_1(j,s)}(y_i-c_2)^2  ]$$
+Where we know the inner problems are just an average within a group which is super easy to compute.
+
+But then we can have many j and s how is this problem easy to solve then? It is discrete, infinite combinations? Or if we just take points in the sample then we have still a lot of points to compare! \textbf{ASK Milan.}
+
+\subsection{Pruning}
+More or less intuitive but I don't think I fully understand. Weakest link prune means the part that decreases the loss by less is condensed into a single node. So you want to start this thing from the bottom. \textbf{PRUNE THE LEAVES LMAO.}
+
+\subsection{Classification trees}
+We will normally classify to a given label via majority vote within the region.
+The important definition is for node m, which represents region $R_m$ and observations $N_m$ we define: 
+$$\hat{p}_{mk} = \frac{1}{N_m}\sum_{i \in R_m}(\textbf{1}(y_i = k))$$
+These are the true labels, no prediction here.
+We then classify according to this rule: $$k(m) := \textrm{argmax}_{k} (\hat{p}_{mk})$$
+Where we loop over the k for given m region and classify as the k that has larger presence in the region.
+
+
+When picking best regions we can't use the squared error loss within, so we will then be using either Gini or cross-entropy/deviance. They generalize to K categories without issue. \textit{ Missclassification error should be avoided.}  
+
+\subsection{Surrogate splits}
+If we have missing data we can make surrogate splits, for each branch we think of the multiple cuts we could make, get the top 5 and compute them with the non missing variables.
+Then if the data has missing values for the first optimal cut, we go to second and so on so on. Then thinking about the regions gets a bit complicated though no? 
+What happens then? \textbf{Complete. READ also missing data 9.6 chapter.}
+
+\begin{algorithmic}
+\State $i \gets 10$
+\If{$i\geq 5$} 
+    \State $i \gets i-1$
+\Else
+    \If{$i\leq 3$}
+        \State $i \gets i+2$
+    \EndIf
+\EndIf 
+\end{algorithmic}
+
+
+\textit{Intuitively this makes sense if the data is truly missing at random}
+If we have categorical data we can add a "missing" category.
+
+\section{ESLII CHAP 15: Random forests}
+\textbf{A finely tuned random forest can be a very powerful model for Task 1 of the project.} 
+
+
+\subsection{ESLII CHAP 8.7:  Bagging}
+\textbf{TO DO READ CHAP 8 ON BOOTSTRAP} \textit{In Section 8.4 we investigated
+the relationship between the bootstrap and Bayes approaches, and found
+that the bootstrap mean is approximately a posterior average.}
+
+
+Bootstrap aggregation can be applied to many models, it works especially well with high variance low bias models like trees.
+
+\textbf{\textit{General procedure:}}
+We have training data \textbf{Z} = $\{(x_1,y_1),...,(x_N, y_N) \}$
+We fit a model to the original data and we get: $\hat{f}(x)$. OG model.
+
+We do many boostrap samples and rerun the model at each iteration, $\hat{f}^{b_1}(x),...,\hat{f}^{b_M}(x)$
+
+Our bagging model will be defined as $$\hat{f}_{\textrm{bag}}(x) = \frac{1}{M} \sum_{b=1}^M \hat{f}^{b_i}(x)$$
+
+And we will of course use it on the original data. \textit{For classification we use majority vote on the predictions.}
+
+This has very nice interpretation, if we define $\hat{E}$ as the empirical distribution.
+The true bagging is defined as $\textbf{E}_{\hat{E}}(\hat{f}^*(x))$ So our estimator is a Monte Carlo approximation to it. And if we have a large enough sample the empirical distribution converges to the true distribution. \textit{Maybe we get something like exp of f(x), IDK, check statistical decision theory then jajaja. }
+
+\textbf{EXAMPLE 8.7.1} Good, check it out, but how do they compute this Bayes error so easily check out the first weeks of theory.
+
+With predictors we have some semi guarantees it will improve, with classifiers there are no such guarantees.
+
+\subsection{Focus on random forests.}
+\textit{Random forests are not just bagged trees, they are bagged decorrelated trees!!}
+
+Boosting and random forests have similar performance on a lot of problems, but are super easy to train.
+
+Same procedure as boosting but the idea is to decrease the correlation amongst the trees to reduce the variance of the model.
+Then what we do is for every bootstrap sample, at each split decision, we only consider a subset of m << p variables to split from. This decorrelates the trees quite a bit.
+
+The expected value of the average will be the same as for one tree but we will be decreasing the variance. \textit{This argument is imprecise as the bootsrtrap samples are not iid but ok we approximate some empirical distribution blablabla} \textbf{Law of large numbers reasoning.}
+Variance of i.d not independent observations will be:
+$$\rho \sigma^2 + \frac{1-\rho}{B}\sigma^2$$
+Deriving this reminds me of time series but I should be able to do it no?!
+\textbf{TRY EXERCISES 15.1 AND 15.4}
+\textit{In 15.1 the key is recognizing the number of covariance terms we will have, for that it is useful to draw a box! b(b-1)}
+
+\subsection{Out of bag error}
+\textit{For each observation $z_i = (x_i, y_i)$, construct its random forest
+predictor by averaging only those trees corresponding to boot-
+strap samples in which $z_i$ did not appear.}
+
+This can be an interesting procedure for our 
+
+\section{Understanding machine learning book:}
+
+\end{document}
+
