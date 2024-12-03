@@ -1,6 +1,8 @@
 \documentclass{article}
 
 \usepackage{amsmath}
+\usepackage{amssymb}
+
 \usepackage{graphicx} % Required for inserting images
 \usepackage{algpseudocodex}
 % \usepackage[preprint]{neurips_2024}
@@ -231,12 +233,55 @@ This can be an interesting procedure for our
 \textbf{Objetives:} Understand boosting, especially the gradient based tree methods.
 
 \subsection{AdaBoost algorithm}
+$w_i = 1/N \quad \forall \quad i$
+For m in 1:M:
+\begin{itemize}
+    \item a. Fit $G_m(x)$ usually a tree A-B 
+    \item $\text{err}_m = \frac{\sum_{n = 1}^{N} w_i \mathbb{I}(y_i \neq G_m(x))}{\sum_{n = 1}^{N} w_i}$ 
+    This is a weighted error metric.
+    \item $w_i = w_i \text{exp}(\alpha_m \mathbb{I}(y_i \neq G_m(x))) \quad \forall i$ Notice only the weights of the missclassified points are 
+    being updated.
 
-\begin{algorithmic}
-    \State $w_i = 1/N \quad \forall \quad i$
+    % \item $\alpha_m = log((1-textrm{err}_m)/\text{err}_m)$
+\end{itemize}
+Final ensemble predictor is now: $$G(x) = \text{sign}[\sum_{m = 1}^{M} \alpha_m G_m (X)]$$        
 
-\end{algorithmic}
-    
+Boosting is a way of fitting an additive expansion over a set of basis functions. This sounds like a mouthful but you can see it from the last estimator. 
+
+\subsection{Forward stagewise additive fitting}
+Generally you would have a class of models $f(x) = \sum_{m = 1}^{M} \beta_m b(x;\gamma_m)$ where b depends on data and is parametrized by the gamma.
+Then you would love to minimize the following:
+$$\text{min}_{\left\{\beta_m, \gamma_m\right\}^M } \sum_{i = 1}^{N} \mathbb{L} (y_i, \sum_{m = 1}^{M} \beta_m b(x;\gamma_m))  $$
+But this is super complicated so we can simplify it to the following algorithm, Forward stagewise additive fitting (FSAF):
+
+Initialize $f_0(x) = 0$
+
+For $m = 1:M$
+\begin{itemize}
+    \item $(\beta_m,\gamma_m) = \text{argmin}\sum_{i = 1}^{N}  \mathbb{L}(y_i, f_{m-1}(x_i) = \beta b(x_i,\gamma)) $ See the prediction will be based on a 
+    weighted average of the present model and all the previous models. But the params of all previously fitted models will not be modified.
+    \item Update previous models to be the ensemble with the last iteration: $f_m(x) = f_{m_1}(x) = \beta_m b(x;\gamma_m)$
+\end{itemize}
+Once you have a final ensemble you run the classification decision.
+
+
+Boosting is a special case of this.
+
+\subsection{Loss functions and deriving what boosting is doing 10.4-10.6}
+
+AdaBoost is forward stagewise additive fitting when the loss is exponential. For any base "weak" classifier.
+
+\subsection{Boosting trees}
+Forward stagewise additive fitting but the general function are now trees. These are complex models, given that we have to find the region and
+then the optimal parts within the region (easy part).
+An iteration of FSAF would look like: $$\hat{\Theta} = \text{argmin}_{\Theta_m} \sum_{i=1}^{N}\mathbb{L} (y_i,f_{m-1}(x_i) + T(x_i, \Theta_m))$$
+
+
+\textbf{Special cases could show up in the exam!}
+
+\subsection{Numerical optimization via Gradient boosting}
+THIS IS WHAT I NEED!
+
 
 
 
