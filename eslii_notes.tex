@@ -286,14 +286,106 @@ THIS IS WHAT I NEED!
 
 
 
+\section{ESLII: High dimensional problems p >>N}
+High variance and overfitting are huge concerns.
+Go for highly regularized approaches.
 
+\subsection{Shrunken nearest centroid.}
+
+
+\subsection{Linear classifiers with quadratic reg}
+\textbf{Biggest takeaway is that these models work but they don't perfom automatic feature selection.}
+The standard error of the cross validation is important as well in these contexts.
+
+LDA, logit or SVM, neither of them perform feature selection automatically.
+Ad hoc methods are to remove variables with small coefficients and then refit. \textit{Recursive feature elimination}
+
+\subsection{Linear classifiers with lasso penalty}
+Automatic feature selection and pretty severe.
+
+In fact, by convex duality one can show that when p > N the number of non-zero
+coefficients is at most N for all values of lambda (Rosset and Zhu, 2007, for
+example). Thus the lasso provides a (severe) form of feature selection.
+
+Lasso can work as a classifier when outcomes are coded +1 and -1, 
 
 
 \section{Understanding machine learning book:}
 
+\section{All of stats: Chap 12 Statistical decision theory}
 
+We have a wide variety of estimators $\hat{\theta}$, how do we choose amgonst them, knowing only that the truth $\theta \in \Theta$, where the big theta is
+the parameter space. 
+We will be trying to measure the difference between our estimator and the truth using loss functions.
+They map $\Theta * \Theta \rightarrow \mathcal{R} $
+There are 5 key ones (more in ML): squared error loss, $L_p$ losses, zero-one and the kullback leibler.
+
+\textbf{IMPORTANT:} The estimator $\hat{\theta}$ is a function of the data. And only the data. Yes the parameter will drive the data,
+but for given data the estimator is the same for different truths. That is my best intuition for what comes later.
+
+\subsection{Risk}
+
+\textit{Definition of risk:}
+$$R(\theta,\hat{\theta}) = \mathbb{E}_{\theta} (L(\theta,\hat{\theta})) = \int L(\theta,\hat{\theta}(x)) f(\theta;x)  \,dx   $$
+
+\textit{Intuition:}\\
+This is the expected value (over data generated from truth) of the loss function.
+\\\\
+I think there they try to avoid Bayesian thinking here. I usually interpret as the expectation given  the true underlying data distribution\dots
+I think it is a bit confusing. In the end the correct intuition is we want to compare risks of different estimators at 
+all possible truths. There is only one truth but we don't know ex ante which one it is.
+\textbf{Exercise:}
+Do variance squared bias decompostion for the case of squared error loss.
+
+\textbf{Example 12.2-12.3:}
+In 12.2 the $\theta$ is not random, it is just unknown to the researcher. We take our expectation over that random part which is X.
+
+In 12.3 we use the decomposition from squared error. In the first term we get something in terms of truth and sample size, so this is how we see that for unbiased
+estimators we tend to go to 0 risk as the variance diminishes.
+\textit{We can also get risk estimators that don't depend on true parameter!!!}
+
+\subsection{Bayes risk and minimax:}
+It is difficult for one risk function to uniformly dominate another, so we need other ways to compare risk functions and the estimators that create them.
+
+\textit{Definitions:}
+The max risk is just picking the truth that could yield to worse perfomance, aka, maximize the risk function. $\textrm{sup}_\theta R(\theta,\hat{\theta})$ This is a 
+bit pessimistic.
+Bayes risk is defined as: $$ \int R(\theta,\hat{\theta}) f(\theta)\,d\theta  $$
+\textit{Intuition:} It is now where in Bayes terms we can think of the possible truths, not as Bayes thinking but as a researcher that 
+doesn't know which truth it is ex-ante. This can be defined with the uninformative prior. 
+
+\textbf{Example 12.5}
+This shows how we can pick one or another estimator depending on our criterion. One number summaries are imperfect though,
+we should exercise caution. 
+
+\subsection{Bayes and minimax estimators.}
+Instead of getting random estimators and getting the bayes risk, we can derive estimators such that they minimize
+the bayes risk. These are called Bayes rules. We have an analog for minimax. Pick the estimator 
+that minimizes the maximum.
+
+\subsubsection{Deriving Bayes estimators:}
+\textit{Preliminaries: Bayes theorem}
+We are just using the definition of conditional expecation and applying marginals whatever. Continuous Bayes theorem.
+$$f(\theta|x) = \frac{f(x|\theta)f(\theta)}{m(x)} = \frac{f(x|\theta)f(\theta)}{\int f(x|\theta)f(\theta) \, d\theta }$$ 
+
+We define the posterior risk as (just the conditional risk given the data, this is definition of conditional expectation): $$ r(\hat{\theta}| x) = \int L(\theta,\hat{\theta})f(\theta|x)\,d\theta $$
+
+Now it states that Bayes risk can be rewritten as a function of posterior risk: $$r(f,\hat{\theta}) = \int r(\hat{\theta}|x) m(x) dx$$
+There is a long proof showing this equality is true.
+\textbf{And now if we minimize pointwise for each x, we get the Bayes estimator}.
+
+\textbf{IMPORTANT:} For squared error loss, the Bayes estimator is the conditional expectation.
+There are a couple of other important rules.
+
+The proof in itself is trivial, start from posterior risk and take a derivative with respect to the estimator.
+FOC and you get a conditional expectation. \textit{The important part is that we have done this so that the x are fixed, if not it is impossible. Try those exercises from ML}
+
+\textbf{Try example 12.9, not easy. Well expected value with a prior and we get posterior mean.}
+
+\textit{Rest is not too useful, do the exercises at the end of the chapter for ML.}
+
+\section{All of stats: Chap 22 Classification}
 
 
 
 \end{document}
-
