@@ -17,6 +17,9 @@
 \maketitle
 \section{TO DO LIST}
 \begin{itemize}
+    \item Chapter 2 exercises: 2.5,2.6,2.7,2.9(intuitive but do more mathematically). First approach done transcribe.
+    \item Chapter 3 many exercises, most need quite a bit of lin alg. Check it out as lin alg is essential for exam. 
+    \item 
     \item \textbf{I can start by reading the introduction to new chapter}
     \item Chapter 10: Boosting. \textit{Some basis expansions may be required.}
     \item $$\mathcal{D}$$ \textbf{to make fancy letters}
@@ -36,6 +39,23 @@ Why do we sometimes define it with K-1 alternatives and sometimes we don't care.
 \section{Mathematical statistics: Brief on statistical decision making.}
 \textit{I need to write that couple pages here. Would need a bit more familiarity with the prob theory first.}
 
+\section{ESLII CHAP 2: Overview of supervised learning.}
+This chapter contains the basic ideas and then some 
+
+\section{ESLII CHAP 3: Linear methods for regression.}
+These two chapters are very important and linear algebra heavy (for obvious reasons).
+\section{ESLII CHAP 4: Linear methods for classification.}
+Many important things here, to complement start with the All of Stats chapter. 
+
+\begin{itemize}
+    \item LDA for visualization seems very cool.
+    \item MLE of a multinomial review in depth, don't want to get stuck there.
+    \item LDA or logit sub-section is very important! Relationship between the 2
+    \item Exercise 4.2: lda and linear regression equivalence.
+    \item Exercise 4.6 with separating hyperplanes converging.
+\end{itemize}
+
+
 \section{ESLII CHAP 5: Basis expansions}
 
 \subsection{Basics for understanding boosting.}
@@ -51,12 +71,34 @@ Knot/boundary location is \textit{uniform over the given $x_p$} at first, I am s
 Take each variable and make splines out of it, can be constant or linear or cubic, whatever. Constant is clearest example.
 Then these splines have parameters to be estimated, the grouped mean or whatever, if it's linear it's like a local ols.
 \textbf{We run the same linear algorithm in the end, that is nice part.}
-\section{AoF CHAP 12: Statistical decision theory.}
 
+\begin{itemize}
+    \item Indicator functions and OLS over disjoint regions, ols estimates will give 
+    you sample mean over region.
+    \item Extends to previous chapters very nicely, then coefficients interepreted as usual. 
+    \item Nonparametric logistic regression and natural splines.
+    \item Some RKHS 5.8 also seems interesting.
+    \item Interesting exercises for SVM from infinite dimensional to low dimension.
+\end{itemize}
+
+\section{ESLII CHAP 6: Kernel smoothing}
+Have a quick look could show up somehow.
 
 
 
 \section{ESLII CHAP 7: Model assessment and validation}
+
+\begin{itemize}
+    \item Categorical error deviance important.
+    \item k nearest neighbor bias var decomposition 
+    \item idem for linear regression
+    \item understand ein picture.
+    \item in sample vs extra sample 
+    \item AIC-BIC were mentioned in class so I should check that out. 
+    \item EXERCISES SUPER IMPORTANT DO MOST OF THEM.
+    \item 7.3 and 5.13 on special cross validation cases.
+    \item Bootstrap for cv learn the mathematicall pr of observartion in sample blabla
+\end{itemize}
 
 We choose a loss function, it will be mean squared loss 99 percent of the times. $$L(Y,f(X))=(Y-f(X))^2$$ 
 
@@ -116,6 +158,12 @@ Review the simulation they do because it is confusing.
 \textbf{Main takeaway:} Estimating conditional is more difficult. CV /boot give unbiased estimates of the error rate.
 
 
+\section{ESLII Chap 8: Inference and bagging}
+\begin{itemize}
+    \item Page 285 is very interesting, do as exercise understand deeply
+    \item Bagging good vs bad classifiers. Wisdom of crowds. Application in random forests.
+    \item Exercises don't seem to be too good, check them out anyways, derivation in chapter can also be used as exercise.
+\end{itemize}
 
 \section{Highly imbalanced classes}
 https://stats.stackexchange.com/questions/235808/binary-classification-with-strongly-unbalanced-classes
@@ -123,6 +171,7 @@ https://stats.stackexchange.com/questions/235808/binary-classification-with-stro
 https://stackoverflow.com/questions/59409967/proper-way-to-handle-highly-imbalanced-data-binary-classification
 
 \section{ESLII CHAP 9.2: Tree based methods.}
+\textbf{Very important section!}
 Trees are usually done with this recursive binary splitting, so we split the whole regressor space into 2, then we split the subsequent regions and so on and so on. If you don't stop the tree will be overfitting a lot.
 
 Key equation that describes a tree: 
@@ -177,8 +226,43 @@ What happens then? \textbf{Complete. READ also missing data 9.6 chapter.}
 \textit{Intuitively this makes sense if the data is truly missing at random}
 If we have categorical data we can add a "missing" category.
 
+\section{ESLII CHAP 10: Boosting.}
+\begin{itemize}
+    \item Exponential loss and AdaBoost go through full derivation 343.
+    \item Then derivaation 10.16 -> It is an exercise as well.
+    \item Discussion on different loss functions is also a very interesting one.
+    \item Boosting trees 
+    \item Gradient boosting also very important. \textbf{Not understood by me!}
+    \item Read up on partial dependence plots! Also very interesting!
+\end{itemize}
+
+\section{ESLII CHAP 12: SVM}
+\begin{itemize}
+    \item One of the most math intensive methods: need strong lagrangian + duality.
+    \item In chap 4 there is some discussion on optimal separating hyperplanes for separable problems.
+    \item 12.2.1 Go through these derivations.
+    \item 12.3.2 SVM as a penalization model seems very interesting.
+    \item 12.39 equations of HUber very interesting -> also exercise I think.
+    \item Go in depth into this chapter.
+    \item Good treatment and practice in math book: optmization chapter and svm
+\end{itemize}
+
+\section{ESLII CHAP 13: nearest stuff}
+\begin{itemize}
+    \item Something interesting at 13.2-13.4
+\end{itemize}
+
+\section{ESLII CHAP 13: Unsupervised learning.}
+
 \section{ESLII CHAP 15: Random forests}
 \textbf{A finely tuned random forest can be a very powerful model for Task 1 of the project.} 
+\begin{itemize}
+    \item A lot of things to know in the random forests, specially compared to bagging and boosting. 
+    \item Some important exercises here
+    \item Analysis of random forests 15.4, check it out. Can understand derivation as exercise.
+    \item Almost all these exercises are super interesting to learn.
+\end{itemize}
+
 
 
 \subsection{ESLII CHAP 8.7:  Bagging}
