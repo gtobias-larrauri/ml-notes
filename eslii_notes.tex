@@ -19,32 +19,57 @@
 \begin{itemize}
     \item Chapter 2 exercises: 2.5,2.6,2.7,2.9(intuitive but do more mathematically). First approach done transcribe.
     \item Chapter 3 many exercises, most need quite a bit of lin alg. Check it out as lin alg is essential for exam. 
-    \item 
-    \item \textbf{I can start by reading the introduction to new chapter}
     \item Chapter 10: Boosting. \textit{Some basis expansions may be required.}
-    \item $$\mathcal{D}$$ \textbf{to make fancy letters}
-
-    \item \textit{Optional}
-    \item  Expanding basis 
-    \item Kernel
-    \item Understanding machine learning book. Has chapter list of basics.
 \end{itemize}
 
+\section*{Math for ML: Chapter 7 continuous optimization.}
+\textbf{Summary:} We have algorithms that will converge to a minimum - (stochastic) gradient descent - but that minimum may be a local one. 
+In constrained optimization we use Lagrangian and duality. The dual problem can sometimes be easier to solve than the primal. 
+In 2 cases, quadratic and linear programming problems, we will have strong duality, that is, both (primal and dual) problems give 
+the exact same solution and they can be solved efficiently.  
 
-\section{Classifiers}
+\subsection*{Preliminaries}
+\textit{The most important fact is to check the dimension of what you are deriving! Most times it might be a hidden dot product.}
 
-\section{Logistic regression}
-Why do we sometimes define it with K-1 alternatives and sometimes we don't care.
+\begin{itemize}
+    \item All derivatives over x.
+    \item $\mathbf{a'x} = \mathbf{x'a} = \mathbf{a} $ This one is key!!
+    \item $\mathbf{Ax} = \mathbf{A} $ 
+    \item $ \mathbf{x'Ax} = \mathbf{(A + A')x} $
+\end{itemize}
 
-\section{Mathematical statistics: Brief on statistical decision making.}
-\textit{I need to write that couple pages here. Would need a bit more familiarity with the prob theory first.}
+An interesting way to rewrite a constrained optimization problem is with infinite steps functions: 
+$J(\mathbf{x}) = f(\mathbf{x}) + \sum_{i=1}^{m}\mathbf{1}(g_i(\mathbf{x}))$ and then we can view the lagragian 
+$J(x) = \text{max}_{\mathbf{\lambda} \geq 0}\mathfrak{L}(\mathbf{x,\lambda}) $ the lagrangian is a lower bound of J(x) we can see 
+this when constraints are negative and positive how max will be lambda 0 or infinity. This can be used to derive the weak 
+duality results. Weak duality is not directly super useful in my very limited view as it is just a bound, although bounds can be
+very useful. 
 
-\section{ESLII CHAP 2: Overview of supervised learning.}
+\subsection*{Linear programming and quadratic programming}
+
+We have a linear program: $\text{max}_{\mathbf{\mathbf{x} \in \mathbb{R}^d}}\; \mathbf{c'x}\;  \text{s.t}\; \mathbf{Ax} \leq \mathbf{b} $
+In Lagrangian form we get $\mathfrak{L}(\mathbf{x,\lambda})  = \mathbf{c'x} +  \mathbf{\lambda' (Ax - b)} $
+To get the dual we just take derivative with respect to x plug in the FOC and add the FOC and multiplier positivity as constraints. 
+The derivation has been completed the tricky step is $\lambda'A$ is a vector which makes the whole thing a dot product!
+
+For quadratic program we can get something very similar remember the $x'Qx$ Q is symetric positive definite so tranpose is equal. 
+An important example is solving a system of equations via squared error loss, OLS. 
+$$||\mathbf{Ax -b}||^2 = \mathbf{Ax -b}'\mathbf{Ax -b} = \mathbf{x'A' -b'} \mathbf{Ax -b} = \mathbf{x'A'Ax} - mathbf{x'A'b} - (b'Ax) +\mathbf{b'b}$$
+Notice that all terms are scalars as they should be. Then 2 and 3rd term are the same as the transpose of a scalar is the scalar. Then take derivative. 
+Also while A is not symmetric, A'A is symmetric which simplifies the first derivative.
+
+\subsection*{Convex conjugates}
+
+\subsection*{Exercises}
+7.8 from math book: min wrt w $\mathbf{w'w} \text{s.t} \mathbf{w'x}\leq 1$
+
+
+\section*{ESLII CHAP 2: Overview of supervised learning.}
 This chapter contains the basic ideas and then some 
 
-\section{ESLII CHAP 3: Linear methods for regression.}
+\section*{ESLII CHAP 3: Linear methods for regression.}
 These two chapters are very important and linear algebra heavy (for obvious reasons).
-\section{ESLII CHAP 4: Linear methods for classification.}
+\section*{ESLII CHAP 4: Linear methods for classification.}
 Many important things here, to complement start with the All of Stats chapter. 
 
 \begin{itemize}
@@ -56,9 +81,9 @@ Many important things here, to complement start with the All of Stats chapter.
 \end{itemize}
 
 
-\section{ESLII CHAP 5: Basis expansions}
+\section*{ESLII CHAP 5: Basis expansions}
 
-\subsection{Basics for understanding boosting.}
+\subsection*{Basics for understanding boosting.}
 The core idea in this chapter is to augment/replace the
 vector of inputs X with additional variables, which are transformations of
 X, and then use linear models in this new space of derived input features.
@@ -81,12 +106,12 @@ Then these splines have parameters to be estimated, the grouped mean or whatever
     \item Interesting exercises for SVM from infinite dimensional to low dimension.
 \end{itemize}
 
-\section{ESLII CHAP 6: Kernel smoothing}
+\section*{ESLII CHAP 6: Kernel smoothing}
 Have a quick look could show up somehow.
 
 
 
-\section{ESLII CHAP 7: Model assessment and validation}
+\section*{ESLII CHAP 7: Model assessment and validation}
 
 \begin{itemize}
     \item Categorical error deviance important.
@@ -117,17 +142,17 @@ In data rich scenarios, we divide into 3 parts, training, validation for the mod
 Then we get back to bias variance decomposition. 
 \textbf{This would be good practice to derive and to fully understand what they are doing, expectations over what blabla}
 
-\subsection{7.4 part of the chapter}
+\subsection*{7.4 part of the chapter}
 
 I think that my reasoning above was wrong as now they define it more properly.
 Define the training set t.
 Then $$Err_{X_0,Y_0}= E_{X_0,Y_0}[L(Y^0,\hat{f}(X^0))|t]$$
 This expectation is over the distribution of the test sample. Now this is a random quantity because X0, y0 are new, this is very much CV analog.
 For the unconditional error we take LIE over the distribution of the training samples, we get expected error or risk. Then this can be done in sample version very easily.
-\subsection{7.7 INTERESTING BAYES AND BIC.}
+\subsection*{7.7 INTERESTING BAYES AND BIC.}
 
 
-\subsection{7.10 Cross validation}
+\subsection*{7.10 Cross validation}
 Remember asymptotics of cross validation are tough due to correlation, read that paper and the executive summary.
 Cross validation estimator of pred error (I think they should say risk). $$CV(\hat{f})=\frac{1}{N}\sum_i=L(y_i,\hat{f}^{-k(i)}(X_i))$$
 
@@ -138,7 +163,7 @@ For hyper parameter tuning we usually need to use brute force grid search.
 The right way to do CV, \textit{avoid data leakage}, start with CV split and then do variable selection. 
 If we have multistep modeling, like variable selection. \textbf{The CV is done in the first step and then all the rest follows as normal but applied to the K-1 folds, never the total sample.}
 
-\subsection{Bootstrap}
+\subsection*{Bootstrap}
 \textbf{Z}=$(z_1,...,z_N)$ where $z_i = (x_i,y_i)$ tuple, so each tuple is an iid sample.
 $S(Z) $ is the statistic and we can compute the variance or confidence interval with ease.
 
@@ -152,120 +177,24 @@ Interesting thought, so the bootstrap will converge to the variance of the estim
 
 Not a good estimator for expected error/risk. Can be more or less fixed.
 
-\subsection{Expected error or conditional error}
+\subsection*{Expected error or conditional error}
 
 Review the simulation they do because it is confusing. 
 \textbf{Main takeaway:} Estimating conditional is more difficult. CV /boot give unbiased estimates of the error rate.
 
 
-\section{ESLII Chap 8: Inference and bagging}
+\section*{ESLII Chap 8: Inference and bagging}
 \begin{itemize}
     \item Page 285 is very interesting, do as exercise understand deeply
     \item Bagging good vs bad classifiers. Wisdom of crowds. Application in random forests.
     \item Exercises don't seem to be too good, check them out anyways, derivation in chapter can also be used as exercise.
 \end{itemize}
 
-\section{Highly imbalanced classes}
+\subsection**{Highly imbalanced classes}
 https://stats.stackexchange.com/questions/235808/binary-classification-with-strongly-unbalanced-classes
 
 https://stackoverflow.com/questions/59409967/proper-way-to-handle-highly-imbalanced-data-binary-classification
-
-\section{ESLII CHAP 9.2: Tree based methods.}
-\textbf{Very important section!}
-Trees are usually done with this recursive binary splitting, so we split the whole regressor space into 2, then we split the subsequent regions and so on and so on. If you don't stop the tree will be overfitting a lot.
-
-Key equation that describes a tree: 
-$$\hat{f}(X) = \sum_{m=1}^{N_r} c_m \textrm{\textbf{I}}(X \in R_m)$$
-This seems complicated but it just means that for all observations in a given region we will predict with a constant number.
-
-If we then use a squared loss criterion the $c_m$ tha minimizes the loss will be the conditional mean for that given subset.
-
-It is easy start from $\sum_i^n(y_i -f(x))^2$ then plug in our f(x) and just decompose this using the indicator, so partition the n sum into different smaller sums for each subgroup.
-\textit{Do the derivation as an exercise.}
-
-Then for any general split:
-We consider the following regions: $R_1(j,s) = \{ X| X_j \leq s \}$ and $R_2(j,s) = \{ X| X_j > s \}$
-
-Our optimization problem is then to minimize the squared loss in both regions : 
-$$ \textrm{min}_{j,s}[\textrm{min}_{c_1} \sum_{x_i \in R_1(j,s)}(y_i-c_1)^2 + \textrm{min}_{c_2} \sum_{x_i \in R_1(j,s)}(y_i-c_2)^2  ]$$
-Where we know the inner problems are just an average within a group which is super easy to compute.
-
-But then we can have many j and s how is this problem easy to solve then? It is discrete, infinite combinations? Or if we just take points in the sample then we have still a lot of points to compare! \textbf{ASK Milan.}
-
-\subsection{Pruning}
-More or less intuitive but I don't think I fully understand. Weakest link prune means the part that decreases the loss by less is condensed into a single node. So you want to start this thing from the bottom. \textbf{PRUNE THE LEAVES LMAO.}
-
-\subsection{Classification trees}
-We will normally classify to a given label via majority vote within the region.
-The important definition is for node m, which represents region $R_m$ and observations $N_m$ we define: 
-$$\hat{p}_{mk} = \frac{1}{N_m}\sum_{i \in R_m}(\textbf{1}(y_i = k))$$
-These are the true labels, no prediction here.
-We then classify according to this rule: $$k(m) := \textrm{argmax}_{k} (\hat{p}_{mk})$$
-Where we loop over the k for given m region and classify as the k that has larger presence in the region.
-
-
-When picking best regions we can't use the squared error loss within, so we will then be using either Gini or cross-entropy/deviance. They generalize to K categories without issue. \textit{ Missclassification error should be avoided.}  
-
-\subsection{Surrogate splits}
-If we have missing data we can make surrogate splits, for each branch we think of the multiple cuts we could make, get the top 5 and compute them with the non missing variables.
-Then if the data has missing values for the first optimal cut, we go to second and so on so on. Then thinking about the regions gets a bit complicated though no? 
-What happens then? \textbf{Complete. READ also missing data 9.6 chapter.}
-
-\begin{algorithmic}
-\State $i \gets 10$
-\If{$i\geq 5$} 
-    \State $i \gets i-1$
-\Else
-    \If{$i\leq 3$}
-        \State $i \gets i+2$
-    \EndIf
-\EndIf 
-\end{algorithmic}
-
-
-\textit{Intuitively this makes sense if the data is truly missing at random}
-If we have categorical data we can add a "missing" category.
-
-\section{ESLII CHAP 10: Boosting.}
-\begin{itemize}
-    \item Exponential loss and AdaBoost go through full derivation 343.
-    \item Then derivaation 10.16 -> It is an exercise as well.
-    \item Discussion on different loss functions is also a very interesting one.
-    \item Boosting trees 
-    \item Gradient boosting also very important. \textbf{Not understood by me!}
-    \item Read up on partial dependence plots! Also very interesting!
-\end{itemize}
-
-\section{ESLII CHAP 12: SVM}
-\begin{itemize}
-    \item One of the most math intensive methods: need strong lagrangian + duality.
-    \item In chap 4 there is some discussion on optimal separating hyperplanes for separable problems.
-    \item 12.2.1 Go through these derivations.
-    \item 12.3.2 SVM as a penalization model seems very interesting.
-    \item 12.39 equations of HUber very interesting -> also exercise I think.
-    \item Go in depth into this chapter.
-    \item Good treatment and practice in math book: optmization chapter and svm
-\end{itemize}
-
-\section{ESLII CHAP 13: nearest stuff}
-\begin{itemize}
-    \item Something interesting at 13.2-13.4
-\end{itemize}
-
-\section{ESLII CHAP 13: Unsupervised learning.}
-
-\section{ESLII CHAP 15: Random forests}
-\textbf{A finely tuned random forest can be a very powerful model for Task 1 of the project.} 
-\begin{itemize}
-    \item A lot of things to know in the random forests, specially compared to bagging and boosting. 
-    \item Some important exercises here
-    \item Analysis of random forests 15.4, check it out. Can understand derivation as exercise.
-    \item Almost all these exercises are super interesting to learn.
-\end{itemize}
-
-
-
-\subsection{ESLII CHAP 8.7:  Bagging}
+\subsection*{ESLII CHAP 8.7:  Bagging}
 \textbf{TO DO READ CHAP 8 ON BOOTSTRAP} \textit{In Section 8.4 we investigated
 the relationship between the bootstrap and Bayes approaches, and found
 that the bootstrap mean is approximately a posterior average.}
@@ -290,7 +219,7 @@ The true bagging is defined as $\textbf{E}_{\hat{E}}(\hat{f}^*(x))$ So our estim
 
 With predictors we have some semi guarantees it will improve, with classifiers there are no such guarantees.
 
-\subsection{Focus on random forests.}
+\subsection*{Focus on random forests.}
 \textit{Random forests are not just bagged trees, they are bagged decorrelated trees!!}
 
 Boosting and random forests have similar performance on a lot of problems, but are super easy to train.
@@ -305,18 +234,79 @@ Deriving this reminds me of time series but I should be able to do it no?!
 \textbf{TRY EXERCISES 15.1 AND 15.4}
 \textit{In 15.1 the key is recognizing the number of covariance terms we will have, for that it is useful to draw a box! b(b-1)}
 
-\subsection{Out of bag error}
+\subsection*{Out of bag error}
 \textit{For each observation $z_i = (x_i, y_i)$, construct its random forest
 predictor by averaging only those trees corresponding to boot-
 strap samples in which $z_i$ did not appear.}
 
 This can be an interesting procedure for our 
 
-\section{ESLII CHAP 10: Boosting and additive trees.}
+\section*{ESLII CHAP 9.2: Tree based methods.}
+\textbf{Very important section!}
+Trees are usually done with this recursive binary splitting, so we split the whole regressor space into 2, then we split the subsequent regions and so on and so on. If you don't stop the tree will be overfitting a lot.
 
-\textbf{Objetives:} Understand boosting, especially the gradient based tree methods.
+Key equation that describes a tree: 
+$$\hat{f}(X) = \sum_{m=1}^{N_r} c_m \textrm{\textbf{I}}(X \in R_m)$$
+This seems complicated but it just means that for all observations in a given region we will predict with a constant number.
 
-\subsection{AdaBoost algorithm}
+If we then use a squared loss criterion the $c_m$ tha minimizes the loss will be the conditional mean for that given subset.
+
+It is easy start from $\sum_i^n(y_i -f(x))^2$ then plug in our f(x) and just decompose this using the indicator, so partition the n sum into different smaller sums for each subgroup.
+\textit{Do the derivation as an exercise.}
+
+Then for any general split:
+We consider the following regions: $R_1(j,s) = \{ X| X_j \leq s \}$ and $R_2(j,s) = \{ X| X_j > s \}$
+
+Our optimization problem is then to minimize the squared loss in both regions : 
+$$ \textrm{min}_{j,s}[\textrm{min}_{c_1} \sum_{x_i \in R_1(j,s)}(y_i-c_1)^2 + \textrm{min}_{c_2} \sum_{x_i \in R_1(j,s)}(y_i-c_2)^2  ]$$
+Where we know the inner problems are just an average within a group which is super easy to compute.
+
+But then we can have many j and s how is this problem easy to solve then? It is discrete, infinite combinations? Or if we just take points in the sample then we have still a lot of points to compare! \textbf{ASK Milan.}
+
+\subsection*{Pruning}
+More or less intuitive but I don't think I fully understand. Weakest link prune means the part that decreases the loss by less is condensed into a single node. So you want to start this thing from the bottom. \textbf{PRUNE THE LEAVES LMAO.}
+
+\subsection*{Classification trees}
+We will normally classify to a given label via majority vote within the region.
+The important definition is for node m, which represents region $R_m$ and observations $N_m$ we define: 
+$$\hat{p}_{mk} = \frac{1}{N_m}\sum_{i \in R_m}(\textbf{1}(y_i = k))$$
+These are the true labels, no prediction here.
+We then classify according to this rule: $$k(m) := \textrm{argmax}_{k} (\hat{p}_{mk})$$
+Where we loop over the k for given m region and classify as the k that has larger presence in the region.
+
+
+When picking best regions we can't use the squared error loss within, so we will then be using either Gini or cross-entropy/deviance. They generalize to K categories without issue. \textit{ Missclassification error should be avoided.}  
+
+\subsection*{Surrogate splits}
+If we have missing data we can make surrogate splits, for each branch we think of the multiple cuts we could make, get the top 5 and compute them with the non missing variables.
+Then if the data has missing values for the first optimal cut, we go to second and so on so on. Then thinking about the regions gets a bit complicated though no? 
+What happens then? \textbf{Complete. READ also missing data 9.6 chapter.}
+
+\begin{algorithmic}
+\State $i \gets 10$
+\If{$i\geq 5$} 
+    \State $i \gets i-1$
+\Else
+    \If{$i\leq 3$}
+        \State $i \gets i+2$
+    \EndIf
+\EndIf 
+\end{algorithmic}
+
+
+\textit{Intuitively this makes sense if the data is truly missing at random}
+If we have categorical data we can add a "missing" category.
+
+\section*{ESLII CHAP 10: Boosting.}
+\begin{itemize}
+    \item Exponential loss and AdaBoost go through full derivation 343.
+    \item Then derivaation 10.16 -> It is an exercise as well.
+    \item Discussion on different loss functions is also a very interesting one.
+    \item Boosting trees 
+    \item Gradient boosting also very important. \textbf{Not understood by me!}
+    \item Read up on partial dependence plots! Also very interesting!
+\end{itemize}
+\subsection*{AdaBoost algorithm}
 $w_i = 1/N \quad \forall \quad i$
 For m in 1:M:
 \begin{itemize}
@@ -332,7 +322,7 @@ Final ensemble predictor is now: $$G(x) = \text{sign}[\sum_{m = 1}^{M} \alpha_m 
 
 Boosting is a way of fitting an additive expansion over a set of basis functions. This sounds like a mouthful but you can see it from the last estimator. 
 
-\subsection{Forward stagewise additive fitting}
+\subsection*{Forward stagewise additive fitting}
 Generally you would have a class of models $f(x) = \sum_{m = 1}^{M} \beta_m b(x;\gamma_m)$ where b depends on data and is parametrized by the gamma.
 Then you would love to minimize the following:
 $$\text{min}_{\left\{\beta_m, \gamma_m\right\}^M } \sum_{i = 1}^{N} \mathbb{L} (y_i, \sum_{m = 1}^{M} \beta_m b(x;\gamma_m))  $$
@@ -351,11 +341,11 @@ Once you have a final ensemble you run the classification decision.
 
 Boosting is a special case of this.
 
-\subsection{Loss functions and deriving what boosting is doing 10.4-10.6}
+\subsection*{Loss functions and deriving what boosting is doing 10.4-10.6}
 
 AdaBoost is forward stagewise additive fitting when the loss is exponential. For any base "weak" classifier.
 
-\subsection{Boosting trees}
+\subsection*{Boosting trees}
 Forward stagewise additive fitting but the general function are now trees. These are complex models, given that we have to find the region and
 then the optimal parts within the region (easy part).
 An iteration of FSAF would look like: $$\hat{\Theta} = \text{argmin}_{\Theta_m} \sum_{i=1}^{N}\mathbb{L} (y_i,f_{m-1}(x_i) + T(x_i, \Theta_m))$$
@@ -363,38 +353,35 @@ An iteration of FSAF would look like: $$\hat{\Theta} = \text{argmin}_{\Theta_m} 
 
 \textbf{Special cases could show up in the exam!}
 
-\subsection{Numerical optimization via Gradient boosting}
+\subsection*{Numerical optimization via Gradient boosting}
 THIS IS WHAT I NEED!
 
+\section*{ESLII CHAP 12: SVM}
+\begin{itemize}
+    \item One of the most math intensive methods: need strong lagrangian + duality.
+    \item In chap 4 there is some discussion on optimal separating hyperplanes for separable problems.
+    \item 12.2.1 Go through these derivations.
+    \item 12.3.2 SVM as a penalization model seems very interesting.
+    \item 12.39 equations of HUber very interesting -> also exercise I think.
+    \item Go in depth into this chapter.
+    \item Good treatment and practice in math book: optmization chapter and svm
+\end{itemize}
 
+\section*{ESLII CHAP 13: nearest stuff}
+\begin{itemize}
+    \item Something interesting at 13.2-13.4
+\end{itemize}
 
+\section*{ESLII CHAP 13: Unsupervised learning.}
 
-
-\section{ESLII: High dimensional problems p >>N}
-High variance and overfitting are huge concerns.
-Go for highly regularized approaches.
-
-\subsection{Shrunken nearest centroid.}
-
-
-\subsection{Linear classifiers with quadratic reg}
-\textbf{Biggest takeaway is that these models work but they don't perfom automatic feature selection.}
-The standard error of the cross validation is important as well in these contexts.
-
-LDA, logit or SVM, neither of them perform feature selection automatically.
-Ad hoc methods are to remove variables with small coefficients and then refit. \textit{Recursive feature elimination}
-
-\subsection{Linear classifiers with lasso penalty}
-Automatic feature selection and pretty severe.
-
-In fact, by convex duality one can show that when p > N the number of non-zero
-coefficients is at most N for all values of lambda (Rosset and Zhu, 2007, for
-example). Thus the lasso provides a (severe) form of feature selection.
-
-Lasso can work as a classifier when outcomes are coded +1 and -1, 
-
-
-\section{Understanding machine learning book:}
+\section*{ESLII CHAP 15: Random forests}
+\textbf{A finely tuned random forest can be a very powerful model for Task 1 of the project.} 
+\begin{itemize}
+    \item A lot of things to know in the random forests, specially compared to bagging and boosting. 
+    \item Some important exercises here
+    \item Analysis of random forests 15.4, check it out. Can understand derivation as exercise.
+    \item Almost all these exercises are super interesting to learn.
+\end{itemize}
 
 \section{All of stats: Chap 12 Statistical decision theory}
 
@@ -407,7 +394,7 @@ There are 5 key ones (more in ML): squared error loss, $L_p$ losses, zero-one an
 \textbf{IMPORTANT:} The estimator $\hat{\theta}$ is a function of the data. And only the data. Yes the parameter will drive the data,
 but for given data the estimator is the same for different truths. That is my best intuition for what comes later.
 
-\subsection{Risk}
+\subsection*{Risk}
 
 \textit{Definition of risk:}
 $$R(\theta,\hat{\theta}) = \mathbb{E}_{\theta} (L(\theta,\hat{\theta})) = \int L(\theta,\hat{\theta}(x)) f(\theta;x)  \,dx   $$
@@ -428,7 +415,7 @@ In 12.3 we use the decomposition from squared error. In the first term we get so
 estimators we tend to go to 0 risk as the variance diminishes.
 \textit{We can also get risk estimators that don't depend on true parameter!!!}
 
-\subsection{Bayes risk and minimax:}
+\subsection*{Bayes risk and minimax:}
 It is difficult for one risk function to uniformly dominate another, so we need other ways to compare risk functions and the estimators that create them.
 
 \textit{Definitions:}
@@ -442,7 +429,7 @@ doesn't know which truth it is ex-ante. This can be defined with the uninformati
 This shows how we can pick one or another estimator depending on our criterion. One number summaries are imperfect though,
 we should exercise caution. 
 
-\subsection{Bayes and minimax estimators.}
+\subsection*{Bayes and minimax estimators.}
 Instead of getting random estimators and getting the bayes risk, we can derive estimators such that they minimize
 the bayes risk. These are called Bayes rules. We have an analog for minimax. Pick the estimator 
 that minimizes the maximum.
