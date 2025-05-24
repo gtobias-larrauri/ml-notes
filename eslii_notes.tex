@@ -6,7 +6,7 @@
 \usepackage{graphicx} % Required for inserting images
 \usepackage{algpseudocodex}
 % \usepackage[preprint]{neurips_2024}
-\usepackage[preprint]{neurips_2024}
+
 \begin{document}
 
 \title{machine learning notes}
@@ -61,8 +61,10 @@ Also while A is not symmetric, A'A is symmetric which simplifies the first deriv
 \subsection*{Convex conjugates}
 
 \subsection*{Exercises}
-7.8 from math book: min wrt w $\mathbf{w'w} \text{s.t} \mathbf{w'x}\leq 1$
-
+7.8 from math book: min wrt w $\mathbf{w'w} \text{s.t} \mathbf{w'x}\geq 1$
+Multiply inequality by -1 so everything is nicer. Set up primal lagrangian, condition is w = lambda x 
+dual is a function of lambda(scalar) and data and s.t lambda being positive. 
+\textit{I think this is PCA related} 
 
 \section*{ESLII CHAP 2: Overview of supervised learning.}
 This chapter contains the basic ideas and then some 
@@ -371,6 +373,38 @@ THIS IS WHAT I NEED!
 \begin{itemize}
     \item Something interesting at 13.2-13.4
 \end{itemize}
+\subsection*{
+    Lecture 3 derivation of consistency for k-NN, k=1
+}
+This holds a big relation with the Bayes error derivation! Some exercise like this might come up in the exam.
+We start from the usual suspect $$\mathbb{E}(\mathbb{I}(Y \neq \psi(x))| X = x) $$ and 
+with indicators we can usually expand this expectation. We also use the definition $\eta(x) := P(Y=1|X=x)$.
+Let's go from probability theorems super basic, when will the indicator be one, 
+it will be one if the outcome is one and the classifier is 0 or viceversa. Then we know that the expected
+value is just the probability of those events. $P((Y=1 \cap h(x)= 0) \cup (Y=0 \cap h(x)=1) |X= x) = 
+P((Y=1 \cap h(x)= 0)|X= x) + P((Y=0 \cap h(x)=1) |X=x)
+$
+where the events are disjoint and so the union is their sum. Now we remember the definition of a conditional 
+probability: $P(A|B) = \frac{P(A = a \cap B = b)}{P(B = b)}$.
+Applying this with an extra conditional will give us: 
+\begin{align*}
+P(Y=1 \cap h(x) = 0|X=x)
+=P(Y=1|X=x,h(x)=0)\times P(h(x)=0|X=x) =\\ P(Y=1|X=x)\times P(h(x)=0|X=x) 
+\end{align*}
+
+Where the last equality follows because given x we know what the classifier will give us so that conditioning is irrelevant. 
+
+Putting everything together we get the following expression for the risk: 
+$\eta(x)\times P(h(x)=0 | X = x) + (1-\eta(x))P(h(x)=1 | X = x)$
+\textit{We have shown independence of the two events by definition two events independent if their 
+intersection is just the multiplication and this is what we get here.}
+Then we have the question of what $P(h(x)=0 | X = x)$ is in K-NN with k=1. Well, given an X we know the nearest neighbor
+and so it is $P(Y = 0|X=X_{nn})$ conditioning on X-nn implicitly conditions on x I think. \textbf{Make this reasoning more accurate 
+requires some deep prob knowledge I think, I don't fully get it.In the proper exercise we have expectation outisde.}
+Then we want to show that the nearest neighbor converges to x.
+$$P(||X_{nn} -x|| > \epsilon) =P(\text{min}(||X_i -x|| > \epsilon)) =  P(\cap_{i=1}^n \{||X_i -x|| > \epsilon \})$$
+Here we use the fact that the nearest neighbor is defined as the minimum distance in the sample and then use the typical translation 
+of the minimum to all a statement with all the points in the sample. Then iid and some other stuff.
 
 \section*{ESLII CHAP 13: Unsupervised learning.}
 
@@ -381,7 +415,80 @@ THIS IS WHAT I NEED!
     \item Some important exercises here
     \item Analysis of random forests 15.4, check it out. Can understand derivation as exercise.
     \item Almost all these exercises are super interesting to learn.
+    \item Exercises done 15.1, 15.3, 15.4 
 \end{itemize}
+Random forest gets the ideas from bagging. Average independent estimators to reduce the variance. Of course different trees will not 
+be independent so we need to decorrelate them by selecting a subset (m < p) of variables on which to make the split points. \textit{I think that the majority of improvement in random forests 
+comes from reducing the variance of individual estimators not by reducing the bias.}
+
+For regression we will average the predicted value for different trees and for classification we will take a majority vote.
+IID average will have a variance of $\frac{1}{B}\sigma^2$ and we see it is all great as sample grows large. On the other hand if we have an ID(identically sampled NOT independent) 
+the variance of the mean will be $\rho \sigma^2 + \frac{1 - \rho}{B}\sigma^2 $ by reducing correlation we can get to what we want. 
+
+\textbf{Out of Bag Samples:}
+For each observation we construct the predictor/estimator based on trees in which a given observation did not appear.
+Not sure how exactly you would do that lol. Review. 
+
+\textbf{Variable importance:}
+Impurity reductions accumulated over all splits and summed over all trees in the forest. Pse metric.
+\textbf{Random forest and overfitting:}
+If we have a small number of relevant predictors and a large number of noisy variables a random forest is unlikely to do well.
+
+\subsection*{Bagging 8.7}
+$$\hat{f}_{\text{bag}}(x) := B^{-1} \sum_{i=1}^{B} f^{*b}(x)$$
+The estimators are trained with data from the empirical distribution $\hat{\mathcal{P}}$ which is a DISCRETE, distribution which puts 
+density of 1/N, $\mathbb{E}_{\hat{\mathcal{P}}}\hat{f}_{\text{bag}}(x) $ and we do an MC simulation of it as the B go to infinity we will converge to that estimator. 
+
+\textbf{Bagging limitations:} 1. It will work with some guarantees via MSE bias variance decomposition but that does not exist for classification. 
+Then it can make it worse in terms of classification. 2. For linear estimators there should be no improvement, Exercise 15.3 must be wrong somewhere. 
+
+Semi proof via bias variance decomposition: We have $(x_i,y_i) \sim \mathcal{P}, f_{\text{ag}}(x) = \mathbb{E}_{\mathcal{P}}(\hat{f}^*(x)) $
+We can start with the risk for MSE loss: 
+\begin{align*}
+    \mathbb{E}_{\mathcal{P}}(Y- \hat{f}^*(x))^2 &=  \mathbb{E}_{\mathcal{P}}(Y - f_{\text{ag}}(x) + f_{\text{ag}}(x) - \hat{f}^*(x))^2 \\
+         & = \mathbb{E}_{\mathcal{P}}(Y - f_{\text{ag}}(x))^2 +\mathbb{E}_{\mathcal{P}}( f_{\text{ag}}(x) - \hat{f}^*(x))^2 \\
+         &\geq \mathbb{E}_{\mathcal{P}}(Y - f_{\text{ag}}(x))^2
+\end{align*}
+Notice on the second line the first term is the bias and the second is teh variance. 
+Notice if we set the estimator to be the bagged estimator, the second term will be 0 and we get a reduction of risk.      
+
+\subsection*{Exercise solution sketch}
+\textbf{Exercise 15.1, also ps5}\\
+\textbf{This is a key formula to remember.} Think of it in matrix terms for intuition, can also be 
+derived by induction via the typical sum of two elements formula.
+\noindent
+$\text{Var}(\sum_{i=1}^{N}X_i) = \sum_{ij}^{N} \text{Cov}(x_i, x_j) = \sum_{i=1}^{N}\text{Var}(X_i) + \sum_{i,j i\neq j}^{N}\text{Cov}(x_i,x_j)$
+After this result the rest is applying basic formulas. 
+
+\textbf{Exercise 15.2: risk}\\
+We have the folling model $\text{Pr}(Y=1 | X) = q + (1 -2q)* \mathbb{I}(\sum_{j=1}^{J}x_j > J/2), \quad X \sim U[0,1]^p \;, 0 \leq q \leq 0.5 \;, J \leq p. $
+$$R(h^*) = \mathbb{E}_X[\eta(X)\mathbb{I}(h^*(X)=0) + (1-\eta(X))\mathbb{I}(h^*(X)=1)], \; \eta(X = \text{Pr}(Y=1|X=x) $$
+You need to notice by the DGP, that if the indicator is on that means q is geq 0.5 and so one implies the other.
+The go one by one, e.g, $\mathbb{E}_X[\eta (X)\mathbb{I}(h^*(X)=0)] $
+this expectation is eta in the situations where the indicator is positive weighted by the probability of it being positive =  q 0.5, by the uniform distribution.
+This reasoning is only correct if eta X is constant over the integration domain, and it is in this case.
+The correct result is q in the end. 
+
+\textbf{Exercise 15.4: bagging linear stuff}\\
+\textit{This is a very interesting exercise!!!! Teaches to think about boostrap} 
+
+
+We start with an iid sample $x_i \sim F(\mu,\sigma^2)$ and from it we make two boostrap samples ($\bar{x}_1^*, \bar{x}_2^*$) using the empirical cdf.
+This CDF is discrete with mass of 1/N and it only outputs the values from the original sample. 
+Let's ask ourselves about the covariance between 2 values coming from the boostrap sample. 
+$\text{Cov}(x_i,x_j) = \mathbb{E}(x_i,x_j) - \mathbb{E}(x_i)\mathbb{E}(x_j)$
+What is the first term? Well if the xi and xj are the same then there is covaraince and that term becomes $\mathbb{E(x_i^2)} $ which can be derived 
+from the original sample. If they are not the same then the correlation is 0 because the original sample is iid. 
+Then we ask what is the expectation, it is the value multiplied by the probability of that happening. And for a given value it is 1/N 
+then we can get $\mathbb{E} (x_i x_j) = (\frac{\sigma^2 + \mu^2}{N} + \frac{\mu^2(N-1)}{N})$  
+Rearrange and $\text{Cov}(x_i,x_j) = \frac{\sigma^2}{N}$
+Then we pull out the formula for variance of a sum and get the variance of the boostrapped sample $\frac{(2N-1)\sigma^2}{N^2}$ 
+and then for the covariance between the two samples we pull out the same formula again and we get $\sigma^2/N$.
+
+To get the variance of the bagged estimator you just need to apply the sum of variances formula again. 
+Notice we already know the variance of a boostrapped mean and the covariance across means, then we just follow similar reasoning as above. 
+We get $$\frac{(2N -1) + (B-1)N}{B N^2}\sigma^2$$, as B goes to infinity we see the first term 
+will dissapear and the second term will go to $\sigma^2/N$ which is the variance of a sample mean. IT ALL MAKES SENSE NOW.
 
 \section{All of stats: Chap 12 Statistical decision theory}
 
@@ -391,6 +498,8 @@ We will be trying to measure the difference between our estimator and the truth 
 They map $\Theta * \Theta \rightarrow \mathcal{R} $
 There are 5 key ones (more in ML): squared error loss, $L_p$ losses, zero-one and the kullback leibler.
 
+
+
 \textbf{IMPORTANT:} The estimator $\hat{\theta}$ is a function of the data. And only the data. Yes the parameter will drive the data,
 but for given data the estimator is the same for different truths. That is my best intuition for what comes later.
 
@@ -398,6 +507,7 @@ but for given data the estimator is the same for different truths. That is my be
 
 \textit{Definition of risk:}
 $$R(\theta,\hat{\theta}) = \mathbb{E}_{\theta} (L(\theta,\hat{\theta})) = \int L(\theta,\hat{\theta}(x)) f(\theta;x)  \,dx   $$
+
 
 \textit{Intuition:}\\
 This is the expected value (over data generated from truth) of the loss function.
@@ -457,6 +567,43 @@ FOC and you get a conditional expectation. \textit{The important part is that we
 
 \section{All of stats: Chap 22 Classification}
 
+\section*{Homeworks:}
+Have all the solutions here next week!!!!
+\subsection*{HW5}
+\textbf{Ex 2, also in book}\\
+\textbf{This is a key formula to remember.} Think of it in matrix terms for intuition, can also be 
+derived by induction via the typical sum of two elements formula.
+\noindent
+$\text{Var}(\sum_{i=1}^{N}X_i) = \sum_{ij}^{N} \text{Cov}(x_i, x_j) = \sum_{i=1}^{N}\text{Var}(X_i) + \sum_{i,j i\neq j}^{N}\text{Cov}(x_i,x_j)$
+After this result the rest is applying basic formulas. 
 
+\textbf{Ex 3}\\
+We have the following setup: $y_i = f(x_i) + \epsilon_i, \quad x_1,...,x_n \in [0,1]^p, \quad \epsilon_1,...,\epsilon_n \sim F(\mu,\sigma^2)$ 
+$f : |f(x) - f(x')| \leq L||x- x'|| \forall x,x'$. 
+\textbf{X are not random!}
+We are told to prove the following bound at a given fixed point $x$: 
+$$\mathbb{E}(\hat{f}(x)-f(x))^2 \leq L^2ph^2 + \frac{\sigma^2}{N(x)} $$
+Where $N(x) = \sum_{i=1}^{n}\mathbb{I}(x_i \in B(x))$ and B regions are the p dimensional boxes. 
 
+What the hell is $\mathbb{E}(\hat{f}(x)-f(x))^2$, well it is a simplified version of risk under MSE,it ignores the epsilon, also switched order, remember that -1 is cancelled out 
+under a square. \textbf{Identifying the issue is half the battle!!!!} 
+
+Let's derive the variance first:
+$$\text{Var}(\hat{f}(x)) = \text{Var}(N(x)^{-1}\sum_{i=1}^{n}y_i\mathbb{I}(x_i \in B(x)))
+= N(x)^{-2}\sum_{i=1}^{n}\text{Var}(y_i)\mathbb{I}(x_i \in B(x)) = \frac{\sigma^2}{N(x)}
+$$
+The thing to notice or required is that the X be non stocahstic which it isn't in this problem formulation. 
+then we take the sigma out of the summation and realize that what is inside is the definition of N(x). 
+
+The bias term is a bit trickier start without the square and square in the end, absolute value and square are friends when it c
+comes to respecting bounds.
+$$|\mathbb{E}(\hat{f}(x)) -f(x)| = |N(x)^{-1}\sum_{i=1}^{n}(\mathbb{E}(y_i) -f(x))\mathbb{I}(x_i \in B(x)) |$$
+Notice that the second term does not change across i so we can use this transformation. Also expectation of yi is just f(xi) as it is non stochastic.
+Applying this we get:
+$$|N(x)^{-1}\sum_{i=1}^{n}(f(x_i) -f(x))\mathbb{I}(x_i \in B(x)) | \leq |N(x)^{-1}\sum_{i=1}^{n}|(f(x_i) -f(x))|\mathbb{I}(x_i \in B(x)) $$
+This first bound comes from the fact that now the terms will not be canceling out (some positive and some negative, now all positive). 
+We now have the L type function and we get: 
+$$\leq N(x)^{-1}\sum_{i=1}^{n}L||x_i - x||\mathbb{I}(x_i \in B(x))  \leq L h \times \sqrt{p}$$
+For the final step we have computed the worst case norm. The length of the p dimensional boxes is h and we compute the euclidean norm of sqrt sum of elements h squared inside.
+Then do not forget to square it to get back the og expression.
 \end{document}
