@@ -1,8 +1,8 @@
 \documentclass{article}
 
+\usepackage[margin=1in]{geometry}
 \usepackage{amsmath}
 \usepackage{amssymb}
-
 \usepackage{graphicx} % Required for inserting images
 \usepackage{algpseudocodex}
 % \usepackage[preprint]{neurips_2024}
@@ -29,6 +29,26 @@ In 2 cases, quadratic and linear programming problems, we will have strong duali
 the exact same solution and they can be solved efficiently.  
 
 \subsection*{Preliminaries}
+\textit{Some basic rules from inverse and transpose key for matrix derivations.}
+\begin{align*}
+\mathbf{A A^{-1} = I = A^{-1} A \;, (AB)^{-1} = B^{-1}A^{-1} \;, (A + B)^{-1} \neq (A)^{-1} + (B)^{-1}}
+\\
+\mathbf{(A^T)^T = A \;, (A+B)^T = A^T + B^T \;,(AB)^T = B^T A^T}
+\end{align*}
+
+\textit{Definition of variance/covariance of a random vector}
+After a few steps some stuff cancels out, we get traditional formula for variance
+but this time in vector form.
+\begin{align*}
+\text{Var}(Z) := \mathbb{E}[(Z - \mathbb{E}(Z) )(Z - \mathbb{E}(Z))^T] 
+\end{align*}
+We have the equivalent for the conditional variance: 
+\begin{align*}
+    \text{Var}(Z) := \mathbb{E}[(Z - \mathbb{E}(Z|X) )(Z - \mathbb{E}(Z|X))^T|X]
+    = \mathbb{E}[ZZ^T|X] - \mathbb{E}[\mathbb{E}(Z|X)\mathbb{E}(Z|X)^T|X]
+\end{align*}
+
+
 \textit{The most important fact is to check the dimension of what you are deriving! Most times it might be a hidden dot product.}
 
 \begin{itemize}
@@ -337,7 +357,8 @@ For $m = 1:M$
     \item $(\beta_m,\gamma_m) = \text{argmin}\sum_{i = 1}^{N}  \mathbb{L}(y_i, f_{m-1}(x_i) = \beta b(x_i,\gamma)) $ See the prediction will be based on a 
     weighted average of the present model and all the previous models. But the params of all previously fitted models will not be modified.
     \item Update previous models to be the ensemble with the last iteration: $f_m(x) = f_{m_1}(x) = \beta_m b(x;\gamma_m)$
-\end{itemize}
+\end{itemize}.00.
+
 Once you have a final ensemble you run the classification decision.
 
 
@@ -569,6 +590,24 @@ FOC and you get a conditional expectation. \textit{The important part is that we
 
 \section*{Homeworks:}
 Have all the solutions here next week!!!!
+\subsection*{HW4}
+\textbf{PRIORITY: Problem 1 Part c The signs are tricky for me, signs and absolute values go case by case.}
+
+\noindent\textbf{Problem 1}
+\\
+a) OLS in matrix form: $\text{min}_\beta ||y-X\beta||^2 = (y-X\beta)^T(y-X\beta)$
+We will want the FOC, the first thing to do is to expand the square, that gives
+$y^T y - 2y^TX\beta + \beta^TX^TX\beta$ where there are two things, first $(y-X\beta)^T = (y^T -\beta^TX^T)$ and
+secondly to identify the 2 dot products are the same thing tranposed. 
+The FOC is then $-2X^T y + 2X^TX\beta = 0$ Here the second term comes from the symmetry of $X^TX$ and so it is the same as it's transpose.
+Rearrange and you get to the OLS estimates.
+
+
+b) Now we are asked to do the same for the Ridge regression $\text{min} ||y-X\beta||^2 +\lambda||\beta||^2$
+In the FOC we will get the usual OLS terms plus a penalty term $\lambda \beta^T \beta$, what we need to recognize is that the term is equivalent to $\lambda \beta^T I \beta$, 
+then we can take its derivative without any issues. 
+The FOC is $-2X^Ty +2X^TX\beta + 2\lambda I \beta = 0$, rearranging will get you to 
+the ridge estimator. 
 \subsection*{HW5}
 \textbf{Ex 2, also in book}\\
 \textbf{This is a key formula to remember.} Think of it in matrix terms for intuition, can also be 
