@@ -17,6 +17,8 @@
 \maketitle
 \section{TO DO LIST}
 \begin{itemize}
+    \item TRACE MATH TRICKS 
+    \item Pos semi definitveness proof a'Ma >0 for all a
     \item Chapter 2 exercises: 2.5,2.6,2.7,2.9(intuitive but do more mathematically). First approach done transcribe.
     \item Chapter 3 many exercises, most need quite a bit of lin alg. Check it out as lin alg is essential for exam. 
     \item Chapter 10: Boosting. \textit{Some basis expansions may be required.}
@@ -137,8 +139,8 @@ Have a quick look could show up somehow.
 
 \begin{itemize}
     \item Categorical error deviance important.
-    \item k nearest neighbor bias var decomposition 
-    \item idem for linear regression
+    \item k nearest neighbor bias var decomposition DONE
+    \item idem for linear regression \textbf{PRIORITY}
     \item understand ein picture.
     \item in sample vs extra sample 
     \item AIC-BIC were mentioned in class so I should check that out. 
@@ -164,6 +166,21 @@ In data rich scenarios, we divide into 3 parts, training, validation for the mod
 Then we get back to bias variance decomposition. 
 \textbf{This would be good practice to derive and to fully understand what they are doing, expectations over what blabla}
 
+\subsection*{MSE for K-NN at a point}
+We start from $\text{Err} = \mathbb{E}(L(Y,\hat{f}(x)) )$ and our k-NN estimator $\hat{Y}(x) = \frac{1}{k}\sum_{x_i \in N_k(x)}^{n}y_i$
+We are in the following setting $y = f(x) + \epsilon_i \; \text{with} \; E(e_i) = 0 \; \text{and} \; V(e_i) = \sigma^2$ how should we 
+interpret this? Well the x are not random, they are prechosen fixed points, for a given fixed point f(x) is not random the only random thing is the noise. 
+$\text{Err}(x_0) = \mathbb{E}( (\hat{Y} -\hat{f}(x_0))^2 | X = x_0 ) = \sigma_{\epsilon}^2 + \text{Bias}^2(\hat{f}(x_0)) + \text{Var}(\hat{f}(x_0))$
+This follows from the bias variance decomposition of mean squared error loss. We now get the individual terms. 
+$$ \text{Var}(\hat{f}(x_0)) = \frac{1}{K^2}\text{Var}(\sum_{x_i \in N_K(x_0)}y_i) = \frac{\sigma_{\epsilon}^2}{K}$$
+where the keys facts are iid (as always) and $\text{Var}(f(x_i) + \epsilon_i) = \text{Var}(\epsilon_i)$ because the x's are fixed inputs. 
+For the bias: $\text{Bias}^2(\hat{f}(x_0)) := (\mathbb{E}(\hat{f}(x_0))-f(x_0))^2 $
+the interesting part is finding the expectation.
+$$\mathbb{E}(\hat{f}(x_0)) = \mathbb{E} (\frac{1}{K} \sum_{x_i \in N_k(x_0)}y_i) = \frac{1}{K} \sum_{x_i \in N_k(x_0)}\mathbb{E}(f(x_i + \epsilon_i))
+= \frac{1}{K}\sum_{x_i \in N_k(x_0)}f(x_i)
+$$ 
+Plugging back in we get the final expression, for k small potentially small bias but high variance. 
+For large k it is the other way around.
 \subsection*{7.4 part of the chapter}
 
 I think that my reasoning above was wrong as now they define it more properly.
@@ -264,7 +281,11 @@ strap samples in which $z_i$ did not appear.}
 This can be an interesting procedure for our 
 
 \section*{ESLII CHAP 9.2: Tree based methods.}
-\textbf{Very important section!}
+\textbf{Very important section!}\\
+\begin{itemize}
+    \item Focus on \textbf{Pruning}, discussion on slides about trees.  
+\end{itemize}
+
 Trees are usually done with this recursive binary splitting, so we split the whole regressor space into 2, then we split the subsequent regions and so on and so on. If you don't stop the tree will be overfitting a lot.
 
 Key equation that describes a tree: 
@@ -295,6 +316,13 @@ $$\hat{p}_{mk} = \frac{1}{N_m}\sum_{i \in R_m}(\textbf{1}(y_i = k))$$
 These are the true labels, no prediction here.
 We then classify according to this rule: $$k(m) := \textrm{argmax}_{k} (\hat{p}_{mk})$$
 Where we loop over the k for given m region and classify as the k that has larger presence in the region.
+
+A classification $$C(T) = \sum_{m=1}^{T}N_m Q_m$$ where $Q_m(T)$ is the impurity measure for a given region M.
+\begin{itemize}
+    \item Missclassification error: $N_m^{-1}\sum_{i \in R_m} \mathbb{I}(y_i \neq K(m)) = 1 - \hat{p}_{mk}(m)$. 1 - prob of majority class in the region. 
+    \item Gini index: $\sum_{k \neq k'} = \hat{p}_{mk}\hat{p}_{mk'} = \sum_{k=1}^{K}\hat{p}_{mk}(1-\hat{p}_{mk})$. Figure out the equality, apply some matrix thoughts.
+    \item Cross entropy: $-\sum_{k=1}^{K}\hat{p}_{mk}\log(\hat{p}_{mk})$
+\end{itemize}
 
 
 When picking best regions we can't use the squared error loss within, so we will then be using either Gini or cross-entropy/deviance. They generalize to K categories without issue. \textit{ Missclassification error should be avoided.}  
@@ -335,10 +363,10 @@ For m in 1:M:
     \item a. Fit $G_m(x)$ usually a tree A-B 
     \item $\text{err}_m = \frac{\sum_{n = 1}^{N} w_i \mathbb{I}(y_i \neq G_m(x))}{\sum_{n = 1}^{N} w_i}$ 
     This is a weighted error metric.
+    \item $\alpha_m  = \text{log}((1-\text{err}_m)/\text{err}_m)$
     \item $w_i = w_i \text{exp}(\alpha_m \mathbb{I}(y_i \neq G_m(x))) \quad \forall i$ Notice only the weights of the missclassified points are 
     being updated.
 
-    % \item $\alpha_m = log((1-textrm{err}_m)/\text{err}_m)$
 \end{itemize}
 Final ensemble predictor is now: $$G(x) = \text{sign}[\sum_{m = 1}^{M} \alpha_m G_m (X)]$$        
 
@@ -428,6 +456,43 @@ Here we use the fact that the nearest neighbor is defined as the minimum distanc
 of the minimum to all a statement with all the points in the sample. Then iid and some other stuff.
 
 \section*{ESLII CHAP 13: Unsupervised learning.}
+\begin{itemize}
+    \item Hierarchical clustering I smell an exam question there. Make sure I know precisely how to 
+    interpret it. 
+    \item k means
+    \item PCA is in the math book.
+    
+\end{itemize}
+
+\subsection*{K-means}
+K - means is very well summarized in the exercise of HW7, we will converge to a local minimum, that will be when no observation 
+changes group from one obs to the other. No guarantees of global minimum, can be arbitrarily bad remember the rectangular box example. 
+We initiate the k means at the worst possible point, we get stuck there and we diverge from the optimum. 
+K-means++ fixes that and provides theoretical guarantees. Sampling is biased so that the centroids start far apart.
+\\
+We aim to minimize a measure of within cluster variation and we have $X_i \in \mathbb{R}^p \; \text{and} \; C_1,...,C_k $
+Formally we minimize the following $$\text{min}_{C_1,...,C_k} \sum_{k=1}^{K} W(C_k)$$
+with our measure of cost being 
+$$
+W(C_k) = \frac{1}{2|C_k|} \sum_{i,i' \in C_k}||X_i -X_{i'}||^2 =
+\sum_{i \in C_k}||X_i -\bar{X}^{k}||^2 \; \text{where} \; \bar{X}^{(k)} := |C_k|^{-1}\sum_{i \in C_k}X_i
+$$
+
+I will prove this equality in a couple of lines but it greatly simplifies the comparisons we need to make, it still measures 
+within cluster dissimilarity.
+To prove this in the scalar case we just add and substract $\bar{X}$ to the LHS of the equality 
+we can expand the square and we will see $2\sum_i(x_i - \bar{X})\sum_{i'}(\bar{X}-x_{i'})$ 
+and then we remember $n\bar{X} = \sum_i x_i$ so this whole thing will be 0 the rest just follows. 
+
+For the general case in $\mathbb{R}^d$ we just need to remember $||X_i - X_i'|| = \sum_{j=1}^{p}(x_{ij} - x_{i'j})^2$
+And we can interchange the sums so we can go component by component and apply the same reasoning as before!
+
+Why can $(a,b),(-a,b),(-a,-b),(a,-b) \; \text{with} a > b$ this setup with kmeans 
+give such bad results? Well imagine the initial centroids are $(0,b),(0,-b)$
+what would be the output from this kmeans? The distance would clearly be $\sum_{x \in X} \sum_{i \in C_k}||X_i -\bar{X}^k ||^2 = \sum_{x \in X}2a^2 = 4a^2$ 
+We recompute the centroids and nothing moves so the algorithm would terminate.
+If we had the centroids $(a,0),(-a,0)$ then we would get $W = 4b^2$
+the difference in loss is then $(a\b)^2$ as a>b gets to infinity the suboptimality gets huge.
 
 \section*{ESLII CHAP 15: Random forests}
 \textbf{A finely tuned random forest can be a very powerful model for Task 1 of the project.} 
@@ -589,7 +654,65 @@ FOC and you get a conditional expectation. \textit{The important part is that we
 \section{All of stats: Chap 22 Classification}
 
 \section*{Homeworks:}
-Have all the solutions here next week!!!!
+\subsection*{HW1}
+\textbf{Ex 1: Shrinkage and variance gains.}\\
+We have a shrunk estimator and we show it will have smaller bias. None 
+of the estimators will be inadmissible, both have a domain with smaller mse. 
+Close to 0 we shrink far from 0 we don't shrink. Has a Bayesian prior interpretation if I am not mistaken.
+
+\textbf{Ex 2: Bias variance decomposition.}\\
+\textit{The notation is a bit looser than I would want but this is the way to 
+do it with less. Y|X=x is not fully correct because the data is not fixed, f hat will also depend on the data.}
+They ask for the test error, whatever that means in this context... $We have Y = f(X) +\epsilon\; \text{with error being 0 mean and independent of everything.}$
+\begin{itemize}
+    \item Plug in true model to MSE expression
+    \item First square expansion cross term always goes to 0: error independence
+    \item Add and substract expectation of estimator at the point
+    \item Second square expansion cross term goes to 0 again: some things go outside exp and we cancel. 
+\end{itemize}
+$$\mathbb{E}((Y - \hat{f}(x))^2|X=x) = \mathbb{E}((f(x)+ \epsilon -\hat{f}(x))^2|X=x)  $$
+We expand the square and we get to $((f(x)-\hat{f}(x))^2 + \epsilon^2 + 2\epsilon (f(x)-\hat{f}(x))  )$
+and by independence between error and everything we know we will get uncorrelatedness. $\mathbb{E}(\epsilon)\mathbb{E}(\hat{f}(x)-f(x))  $ 
+and we get the third term is 0.
+
+Then again $$\mathbb{E}(f(x) +-\mathbb{E}(\hat{f}(x)) -\hat{f}(x)    |X=x) 
+= \mathbb{E}([f(x)-\mathbb{E}(\hat{f}(x))]^2 + (\mathbb{E}(\hat{f}(x)) - \hat{f}(x))^2  
++2(f(x) - \mathbb{E}(\hat{f}(x)))(\mathbb{E}(\hat{f}(x)) - \hat{f}(x))   |X=x) 
+$$
+We see the first terms everything is known and so we go outside the expectaation,
+that is bias sq. Second term is definition of variance of the estimator. 
+£rd term. The first parentheses $(f(x) - \mathbb{E}(\hat{f}(x)))$ is known goes
+outisde the expectation, then the second term expectation known and then the other term gets the expectation 
+and the two things then cancel out $e(e(x)-x) = e(x)-e(x) = 0$. 
+Then we have arrived at our desired decomposition.
+
+\textbf{Ex 3: Risk minimization}\\
+\textit{The key in all of these is to take conditional expectations so f(x) becomes something fixed and we can take derivative.}
+$\mathbb{E}_{Y,X \sim F} (l(Y,f(X)))$
+a) Square loss $l(Y,f(X)) = (Y-f(X))^2$
+Take conditional expectation $\implies \mathbb{E}_X \mathbb{E}_{Y|X=x}((Y-f(x))^2| X=x)  $ 
+Then we go pointwise into the inner expectation and minimize it, taking derivatives with respect to f(x) 
+$\text{FOC} \; \implies \mathbb{E}_{Y|X=x}(2(Y-f(x))(-1)| X=x) = 0;\;\mathbb{E}_{Y|X=x}(Y| X=x) = \mathbb{E}_{Y|X=x}(f(x)| X=x)   $ 
+f(x) is known and so we get the desired result. \\
+
+b) $l(Y,f(X)) = |Y-f(X)|$ We follow the same procedure, take conditional expectation and then the definition of the expectation 
+$$\int_{-\inf}^{inf}|y-f(x)|dF(y|X=x)dy = \int \mathbb{I}(t > y)\times 1 \times dP(Y\leq y|X=x)dy + \int \mathbb{I}(t < y)\times -1 \times dP(Y\leq y|X=x)dy$$
+We remember the definition of abs value which is + or - in a piecewise manner and remember we can take derivative. The two integrals are disjoint 
+which is intuitive, like an indicator function, well literally. At 0 there is no derivative but somehow we workaround with the continuity assumptions.
+$$\implies \int_{-\inf}^{t}dP(Y\leq y|X=x)dy - \int_{t}^{\inf} dP(Y\leq y|X=x)dy = \mathbb{P}(Y \leq t |X=x) - (1 - \mathbb{P}(Y \leq t|X=x) )  = 0 $$
+Rearranging we end up at $\mathbb{P}(Y \leq t |X=x) =0.5 $ where t will be the conditional median.\\
+
+c) $\mathbb{P}(Y \neq f(X)) = \mathbb{E}( \mathbb{I} (Y \neq f(X))) $
+We again follow the same ideas we get to the conditional expectation of the indicator. That will just be a conditional probabiity, from the cases where indicator is on. 
+$$\mathbb{E}_X (\text{Pr}((Y=1 \cap f(x)=0)\cup (Y=0\cap f(x)=1)|X=x)) = \mathbb{E}_X (\text{Pr}((Y=1 \cap f(x)=0)) +  \text{Pr}((Y=0\cap f(x)=1)|X=x))  $$
+Now we apply a couple extra definitions $\text{Pr}(Y=1|X=x) = \frac{\text{Pr}(Y=1 \cap f(x)=0|X=x)}{\text{Pr}(f(x)=0|X=x)}$
+and as f(x) given x is known it will either either be one or zero so $\text{Pr}(f(x)|X=x) = \mathbb{I}(f(x)=0) $
+We end up $$\implies \mathbb{E}_X (\text{Pr}(Y=1|x=x)\mathbb{I}(f(x)=0) + (1-\text{Pr}(Y=1|x=x))\mathbb{I}(f(x)=1)) $$
+From this we can see we are simply choosing which indicator to activate and we will end up at Bayes classifier to go with 1 if conditional prob is larger than 0.5
+
+d) $l(y,t) = -t \log(t) - (1-y) \log(1-t)$ Same stuff conditional first and then we take derivative:
+We get to $$\mathbb{E}_{Y|X=x}(\frac{-y}{f(x)} - \frac{1-y}{1-f(x)}(-1)|X=x) $$
+After rearranging and remembering it is a binary outcome we get to $f(x) = \text{Pr}(Y=1|X=x) $
 \subsection*{HW4}
 \textbf{PRIORITY: Problem 1 Part c The signs are tricky for me, signs and absolute values go case by case.}
 
@@ -609,6 +732,9 @@ then we can take its derivative without any issues.
 The FOC is $-2X^Ty +2X^TX\beta + 2\lambda I \beta = 0$, rearranging will get you to 
 the ridge estimator. 
 \subsection*{HW5}
+\textbf{The first exercise is key!!! Split points appear in almost all exams.}
+\textbf{Ex 1: Split points of Tree}
+
 \textbf{Ex 2, also in book}\\
 \textbf{This is a key formula to remember.} Think of it in matrix terms for intuition, can also be 
 derived by induction via the typical sum of two elements formula.
@@ -645,4 +771,32 @@ We now have the L type function and we get:
 $$\leq N(x)^{-1}\sum_{i=1}^{n}L||x_i - x||\mathbb{I}(x_i \in B(x))  \leq L h \times \sqrt{p}$$
 For the final step we have computed the worst case norm. The length of the p dimensional boxes is h and we compute the euclidean norm of sqrt sum of elements h squared inside.
 Then do not forget to square it to get back the og expression.
+
+\subsection*{HW7}
+
+\textbf{Exercise 3: K-means}\\
+I have completed part a and b these are the easy ones. c-d more complex. 
+We start from the usual k means setup. $$W = \sum_{x \in \mathcal{X}} \text{min}_{C \in C}||x-c||^2$$
+
+a) We want to show that the k-means algorithm minimizes this and it just does pointwise minimization so we should be alright. 
+
+b) We want to show the following 
+$$
+\sum_{x \in S}||x - z||^2 - \sum_{x \in S}||x - C(S)||^2 = |S|\times||c(S)-z||^2
+$$ 
+with $c(S) = (1/|S|)\sum_{x \in S}x$.
+We start from $\sum_{x \in S}||x - z||^2 = \sum_{x \in S}\sum_{j \in \mathcal{P} }(x_j-C(S)_j)^2 + (c(S)_j-z_j)^2 + 2(x_j - c(S)_j)(C(S)_j) -z_j$
+then we reaggregate. Using the definiton of the norm. Because 
+the second term does not change across elements of the set S we can get the absolute value of S on the outisde. 
+
+c) We need to use part b to show that the algorithm always decreases the loss.
+This one is hard. We need to recognize S to be any current partition of $\mathcal{X}$ and z to be any old points $c_i$ old centroids is the best intrepretation. 
+Then after rearranging we get to:
+$$\sum_{x \in C_i}||x-c(C_i)||^2 - \sum_{x \in C_i}||x - c_i||^2 
+= - |C_i|\times||c(C_i) -c_i' ||^2 \leq 0
+$$
+The first two terms are the difference in loss after the new k-means loss after recentering  
+vs the loss for the current sets with any other centroids (consider them the centroids of the past iter.)
+We see that this is decreases unless the $c(C_i) -c_i' = 0$ that is the old centroids are the same. Then we would 
+be stopping.
 \end{document}
